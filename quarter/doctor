@@ -4,19 +4,28 @@ source /root/simpleton/bin/c2 || exit 1
 
 main() {
 
-local quarter=/root/golden-system/quarter
-local ssh_pubkey_path=$quarter/keys
-user=jgurr user_create_if_missing || fail
-user=jmgurr user_create_if_missing || fail
+local quarter_path=/root/golden-system/quarter
+local ssh_pubkey_path=$quarter_path/keys
+
+identify_os || fail
+
+user=jgurr   user_create_if_missing || fail
+user=jmgurr  user_create_if_missing || fail
 user=divcity user_create_if_missing || fail
 
-dockerfile=$quarter image= docker_image_create_if_missing || fail
+packages=podman install_if_missing || fail
+export DOCKER=podman
 
-# pi
-# extensions
+dockerfile=$quarter_path \
+  image=util \
+  docker_image_create_if_missing || fail
+
+image=util \
+  name=herdr \
+  command="herdr" \
+  docker_run_if_missing || fail
 
 }
-
 
 main || return 1
 
