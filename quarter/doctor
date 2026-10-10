@@ -1,0 +1,22 @@
+source /root/simpleton/bin/c2 || exit 1
+
+# users
+
+main() {
+
+local quarter=/root/golden-system/quarter
+local ssh_pubkey_path=$quarter/keys
+user=jgurr user_create_if_missing || fail
+user=jmgurr user_create_if_missing || fail
+user=divcity user_create_if_missing || fail
+
+dockerfile=$quarter image= docker_image_create_if_missing || fail
+
+# pi
+# extensions
+
+}
+
+
+main || return 1
+
