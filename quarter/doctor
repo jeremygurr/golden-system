@@ -1,4 +1,5 @@
-source /root/simpleton/bin/c2 || exit 1
+simple_path=/root/simpleton2
+source $simple_path/c2 || exit 1
 
 # users
 
@@ -16,14 +17,14 @@ user=divcity user_create_if_missing || fail
 packages=podman install_if_missing || fail
 export DOCKER=podman
 
-dockerfile=$quarter_path \
+dockerfile=$simple_path \
   image=util \
   docker_image_create_if_missing || fail
 
-image=util \
-  name=herdr \
-  command="herdr" \
-  docker_run_if_missing || fail
+#image=util \
+#  name=herdr \
+#  command="herdr" \
+#  docker_run_if_missing || fail
 
 }
 
