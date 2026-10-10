@@ -1,8 +1,6 @@
 simple_path=/root/simpleton2
 source $simple_path/c2 || exit 1
 
-# users
-
 main() {
 
 being_function
