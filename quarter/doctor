@@ -5,26 +5,32 @@ source $simple_path/c2 || exit 1
 
 main() {
 
-local quarter_path=/root/golden-system/quarter
-local ssh_pubkey_path=$quarter_path/keys
+being_function
 
-identify_os || fail
+  local quarter_path=/root/golden-system/quarter
+  local ssh_pubkey_path=$quarter_path/keys
 
-user=jgurr   user_create_if_missing || fail
-user=jmgurr  user_create_if_missing || fail
-user=divcity user_create_if_missing || fail
+  identify_os || fail
 
-packages=podman install_if_missing || fail
-export DOCKER=podman
+  user=jgurr   user_create_if_missing || fail
+  user=jmgurr  user_create_if_missing || fail
+  user=divcity user_create_if_missing || fail
 
-dockerfile=$simple_path \
-  image=util \
-  docker_image_create_if_missing || fail
+  packages=podman install_if_missing || fail
+  export DOCKER=podman
 
-#image=util \
-#  name=herdr \
-#  command="herdr" \
-#  docker_run_if_missing || fail
+  cd $simple_path || fail
+  dockerfile=$simple_path \
+    image=util \
+    docker_image_create_if_missing || fail
+
+  #image=util \
+  #  name=herdr \
+  #  command="herdr" \
+  #  docker_run_if_missing || fail
+
+end_function
+handle_return
 
 }
 
