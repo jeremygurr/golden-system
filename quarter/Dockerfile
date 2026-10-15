@@ -9,5 +9,5 @@ RUN chown -R util /home
 
 USER util
 WORKDIR /work
-CMD [ "/bin/bash", "/root/init" ]
+CMD [ "/bin/bash", "/home/init" ]
 
