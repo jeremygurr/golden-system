@@ -1,0 +1,32 @@
+{
+  "retry": {
+    "enabled": true,
+    "maxRetries": 8,
+    "baseDelayMs": 3000,
+    "provider": {
+      "timeoutMs": 3600000,
+      "maxRetries": 0,
+      "maxRetryDelayMs": 0
+    }
+  },
+  "lastChangelogVersion": "1.1.0",
+  "theme": "dark",
+  "defaultProvider": "llama-server-8000",
+  "packages": [
+    "npm:@juicesharp/rpiv-web-tools",
+    "npm:@haphazarddev/pi-interactive-code-review",
+    "npm:pi-double-esc",
+    "git:github.com/DietrichGebert/ponytail",
+    "npm:picrophone@0.10.3",
+    "npm:pi-alert",
+    "npm:privateer-speak",
+    "npm:pi-status-footer",
+    "npm:pi-sandbox",
+    "npm:pi-subagents"
+  ],
+  "httpIdleTimeoutMs": 900000,
+  "defaultThinkingLevel": "medium",
+  "treeFilterMode": "default",
+  "hideThinkingBlock": false
+}
+
