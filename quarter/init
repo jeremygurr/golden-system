@@ -15,16 +15,18 @@ main() {
 
   source ~/.bashrc
   if [[ ! "${OPENROUTER_API_KEY:-}" ]]; then
-    read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY || return 1
-    echo '************'
-    echo "OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>~/.bashrc || return 1
-    export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'
+    read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY && {
+      echo '************'
+      echo "OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>~/.bashrc || return 1
+      export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'
+    }
   fi
   if [[ ! "${GITHUB_TOKEN:-}" ]]; then
-    read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN || return 1
-    echo '************'
-    echo "GITHUB_TOKEN='$GITHUB_TOKEN'" >>~/.bashrc || return 1
-    export GITHUB_TOKEN='$GITHUB_TOKEN'
+    read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
+      echo '************'
+      echo "GITHUB_TOKEN='$GITHUB_TOKEN'" >>~/.bashrc || return 1
+      export GITHUB_TOKEN='$GITHUB_TOKEN'
+    }
   fi
 
   if [[ "${COMMAND:-}" ]]; then
