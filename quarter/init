@@ -5,7 +5,7 @@ main() {
   set -u
 
   if [[ ! -f ~/.ssh/id_rsa ]]; then
-    rsync -a /home-template/ $HOME/ || return 1
+    safe_link /home-template/* /home-template/.* $HOME/ || return 1
     if [[ ! -d ~/.ssh ]]; then
       mkdir ~/.ssh
     fi
