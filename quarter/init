@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-source ~/bin/c2
+source /home-template/bin/c2
+
 main() {
 
   set -u
