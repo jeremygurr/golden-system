@@ -1,34 +1,39 @@
-simple_path=/root/simpleton2
+simple_path=${c2_path:-/root/simpleton2}
+quarter_path=${quarter_path:-/root/golden-system/quarter}
+
+if [[ ! -f $simple_path/c2 ]]; then
+  echo "Missing c2. Either run this in the same folder as c2 or set c2_path to the folder containing it." >&2
+  exit 1
+fi
+
 source $simple_path/c2 || exit 1
 
 main() {
 
-#being_function
+begin_function
 
   local quarter_path=/root/golden-system/quarter
   local ssh_pubkey_path=$quarter_path/keys
 
-  identify_os || return 1
+  identify_os || fail
 
-  user=jgurr   user_create_if_missing || return 1
-  user=jmgurr  user_create_if_missing || return 1
-  user=divcity user_create_if_missing || return 1
+  user=jgurr   user_create_if_missing || fail
+  user=jmgurr  user_create_if_missing || fail
+  user=divcity user_create_if_missing || fail
 
-  packages=podman install_if_missing || return 1
+  packages=podman install_if_missing || fail
   export DOCKER=podman
 
-  cd $simple_path || return 1
-  dockerfile=$simple_path \
-    image=util \
-    docker_image_create_if_missing || return 1
+  cd $simple_path || fail
+  build_docker_util_image || fail
 
-  #image=util \
-  #  name=herdr \
-  #  command="herdr" \
-  #  docker_run_if_missing || return 1
+  image=ai \
+    base_folder=$quarter_path \
+    dockerfile=$quarter_path/Dockerfile \
+    docker_image_create_if_missing || fail
 
-#end_function
-#handle_return
+end_function
+handle_return
 
 }
 
