@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-source /home-template/bin/c2
+source /home/bin/c2
 
 main() {
 
   set -u
 
   if [[ ! -f ~/.ssh/id_rsa ]]; then
-    safe_link /home-template/* /home-template/.* $HOME/ || return 1
     if [[ ! -d ~/.ssh ]]; then
       mkdir ~/.ssh
     fi
