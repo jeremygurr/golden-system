@@ -10,6 +10,7 @@ source $simple_path/c2 || exit 1
 
 main() {
 
+local clean=${clean:-f}
 begin_function
 
   local quarter_path=/root/golden-system/quarter
