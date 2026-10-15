@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+main() {
+
+  set -u
+
+  if [[ ! -f ~/.ssh/id_rsa ]]; then
+    if [[ ! -d ~/.ssh ]]; then
+      mkdir ~/.ssh
+    fi
+    ssh-keygen -mPEM -f ~/.ssh/id_rsa -N "" 
+  fi
+
+  source ~/.bashrc
+  if [[ ! "${OPENROUTER_API_KEY:-}" ]]; then
+    read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY || return 1
+    echo '************'
+    echo "OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>~/.bashrc || return 1
+  fi
+  if [[ ! "${GITHUB_TOKEN:-}" ]]; then
+    read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN || return 1
+    echo '************'
+    echo "GITHUB_TOKEN='$GITHUB_TOKEN'" >>~/.bashrc || return 1
+  fi
+
+  if [[ "${COMMAND:-}" ]]; then
+    /bin/bash -lc "$COMMAND"
+  else
+    /bin/bash -l
+  fi
+
+}
+
+main
+
