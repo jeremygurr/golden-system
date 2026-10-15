@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+DOCKER=${DOCKER:-podman}
+
+if [[ ! -d /root/ai-home ]]; then
+  mkdir -p /root/ai-home/.pi/agent || exit 1
+  cp pi-settings.json /root/ai-home/.pi/agent || exit 1
+  chown -R 99999 /root/ai-home || exit 1
+fi
+
+$DOCKER run -it --rm --name ai -v /root/ai-home:/home ai
+
