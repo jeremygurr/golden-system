@@ -11,7 +11,6 @@
   },
   "lastChangelogVersion": "1.1.0",
   "theme": "dark",
-  "defaultProvider": "llama-server-8000",
   "packages": [
     "npm:@juicesharp/rpiv-web-tools",
     "npm:@haphazarddev/pi-interactive-code-review",
@@ -21,12 +20,11 @@
     "npm:pi-alert",
     "npm:privateer-speak",
     "npm:pi-status-footer",
-    "npm:pi-sandbox",
     "npm:pi-subagents"
   ],
   "httpIdleTimeoutMs": 900000,
   "defaultThinkingLevel": "medium",
   "treeFilterMode": "default",
-  "hideThinkingBlock": false
+  "hideThinkingBlock": true
 }
 
