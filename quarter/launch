@@ -9,10 +9,10 @@ fi
 
 if [[ ! -d /root/ai-home ]]; then
   mkdir -p /root/ai-home/.pi/agent || exit 1
-  $DOCKER run --rm --name ai-transfer -u root -v /root/ai-home:/home.new -e COMMAND="rsync -a /home/ /home.new/" ai || exit 1
+  $DOCKER run --rm --name transfer -u root -v /root/ai-home:/home.new -e COMMAND="rsync -a /home/ /home.new/" harness || exit 1
   cp pi-settings.json /root/ai-home/.pi/agent/settings.json || exit 1
   chown -R 99999 /root/ai-home || exit 1
 fi
 
-$DOCKER run -it --rm --name ai -v /root/ai-home:/home ai
+$DOCKER run -it --rm --name harness -v /root/ai-home:/home harness
 

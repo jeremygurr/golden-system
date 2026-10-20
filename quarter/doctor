@@ -28,7 +28,7 @@ begin_function
   cd $simple_path || fail
   build_docker_util_image || fail
 
-  image=ai \
+  image=harness \
     base_folder=$quarter_path \
     dockerfile=$quarter_path/Dockerfile \
     docker_image_create_if_missing || fail
