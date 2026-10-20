@@ -2,6 +2,7 @@
 
 DOCKER=${DOCKER:-podman}
 clean=${clean:-f}
+debug=${debug:-f}
 
 if [[ $clean == t && -e /root/ai-home ]]; then
   rm -rf /root/ai-home
@@ -14,5 +15,10 @@ if [[ ! -d /root/ai-home ]]; then
   chown -R 99999 /root/ai-home || exit 1
 fi
 
-$DOCKER run -it --rm --name harness -v /root/ai-home:/home harness
+if [[ $debug == t ]]; then
+  $DOCKER run -p 7800:127.0.0.1:7837 -it --rm --name harness -v /root/ai-home:/home harness
+else
+  echo "Launching herdr server..."
+  $DOCKER run -p 7800:127.0.0.1:7837 -d --rm --name harness -e COMMAND="herdr server" -v /root/ai-home:/home harness
+fi
 
