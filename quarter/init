@@ -3,7 +3,6 @@
 source /home/bin/c2
 
 main() {
-  begin_function
 
   set -u
 
