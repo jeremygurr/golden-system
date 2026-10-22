@@ -35,8 +35,9 @@ begin_function
   packages=podman install_if_missing || fail
   export DOCKER=podman
 
-  cd $simple_path || fail
+  pushd $simple_path || fail
   build_docker_util_image || fail
+  popd
 
   image=harness \
     base_folder=$quarter_path \
