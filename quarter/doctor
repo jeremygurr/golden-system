@@ -10,15 +10,11 @@ source $simple_path/c2 || exit 1
 
 main() {
 
-local clean=${clean:-f}
+local clean=${clean:-f} clean_image=${clean_image:-f}
 begin_function
 
   local quarter_path=/root/golden-system/quarter
   local ssh_pubkey_path=$quarter_path/keys
-
-  if [[ $clean == t && -e /home/util ]]; then
-    rm -rf /home/util
-  fi
 
   identify_os || fail
 
@@ -36,10 +32,12 @@ begin_function
   export DOCKER=podman
 
   pushd $simple_path || fail
+  clean=$clean_image \
   build_docker_util_image || fail
   popd
 
   image=harness \
+    clean=$clean_image \
     base_folder=$quarter_path \
     dockerfile=$quarter_path/Dockerfile \
     docker_image_create_if_missing || fail
