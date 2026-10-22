@@ -8,6 +8,7 @@ if [[ $debug == t ]]; then
     -v /home/util:/home \
     -v /repo:/repo \
     -v /work:/work \
+    -e HERDR_SOCKET_PATH=/work/herdr.sock \
     harness "$@"
 else
   echo "Launching herdr server..."
@@ -16,6 +17,7 @@ else
     -v /home/util:/home \
     -v /repo:/repo \
     -v /work:/work \
+    -e HERDR_SOCKET_PATH=/work/herdr.sock \
     harness
 fi
 
