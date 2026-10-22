@@ -1,24 +1,21 @@
 #!/usr/bin/env bash
 
 DOCKER=${DOCKER:-podman}
-clean=${clean:-f}
 debug=${debug:-f}
 
-if [[ $clean == t && -e /root/ai-home ]]; then
-  rm -rf /root/ai-home
-fi
-
-if [[ ! -d /root/ai-home ]]; then
-  mkdir -p /root/ai-home/.pi/agent || exit 1
-  $DOCKER run --rm --name transfer -u root -v /root/ai-home:/home.new -e COMMAND="rsync -a /home/ /home.new/" harness || exit 1
-  cp pi-settings.json /root/ai-home/.pi/agent/settings.json || exit 1
-  chown -R 99999 /root/ai-home || exit 1
-fi
-
 if [[ $debug == t ]]; then
-  $DOCKER run -p 7800:127.0.0.1:7837 -it --rm --name harness -v /root/ai-home:/home harness
+  $DOCKER run -p 7800:127.0.0.1:7837 -it --rm --name harness \
+    -v /home/util:/home \
+    -v /repo:/repo \
+    -v /work:/work \
+    harness
 else
   echo "Launching herdr server..."
-  $DOCKER run -p 7800:127.0.0.1:7837 -d --rm --name harness -e COMMAND="herdr server" -v /root/ai-home:/home harness
+  $DOCKER run -p 7800:127.0.0.1:7837 -d --rm --name harness \
+    -e COMMAND="herdr server" \
+    -v /home/util:/home \
+    -v /repo:/repo \
+    -v /work:/work \
+    harness
 fi
 
