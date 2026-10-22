@@ -18,6 +18,11 @@ begin_function
 
   identify_os || fail
 
+  # TODO: Need to install herdr on host machine also
+  #   chmod 666 /work/herdr
+  #   forward herdr sockets through ssh
+  #   
+
   uid=9999 \
   user=util    user_create_if_missing || fail
 
@@ -42,8 +47,6 @@ begin_function
     dockerfile=$quarter_path/Dockerfile \
     docker_image_create_if_missing || fail
 
-  chown -R util /home/util /repo /work || fail
-
   if [[ ! -d /home/util/.pi ]]; then
     mkdir -p /home/util/.pi/agent || fail
     $DOCKER run --rm --name transfer -u root -v /home/util:/home.new -e COMMAND="rsync -a /home/ /home.new/" harness || fail
@@ -65,6 +68,8 @@ begin_function
     fi
 
   fi
+
+  chown -R util /home/util /repo /work || fail
 
 end_function
 handle_return
