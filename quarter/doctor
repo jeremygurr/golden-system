@@ -77,8 +77,7 @@ begin_function
     install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
   fi
   
-  ports=127.0.0.1:7837:7837 \
-    name=harness \
+  name=harness \
     command="herdr server" \
     volumes="
       /home/util:/home

@@ -3,6 +3,7 @@
 source /home/bin/c2
 
 main() {
+  local update=${update:-f} clean=${clean:-f}
 
   set -u
 
@@ -23,6 +24,17 @@ main() {
   repo=https://github.com/mattpocock/skills.git \
   skills='skills/engineering skills/productivity' \
   skills_add_if_missing || return 1
+
+  if [[ $update == t ]]; then
+    pi update
+    pi update --extensions
+  fi
+
+  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
+    echo "
+ alias d=podmane
+ " >~/.bash_aliases
+  fi
 
   if [[ "${COMMAND:-}" ]]; then
     /bin/bash -lc "$COMMAND"
