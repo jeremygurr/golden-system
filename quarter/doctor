@@ -15,7 +15,12 @@ source $simple_path/c2 || exit 1
 
 main() {
 
-local clean=${clean:-f} update=${update:-f} clean_image=${clean_image:-f}
+local \
+  clean=${clean:-f} \
+  update=${update:-f} \
+  clean_image=${clean_image:-f} \
+  clean_home=${clean_home:-f} \
+
 begin_function
 
   local quarter_path=/root/golden-system/quarter
@@ -24,7 +29,7 @@ begin_function
   identify_os || fail
 
   uid=9999 \
-  user=util    user_create_if_missing || fail
+  clean=$clean_home user=util    user_create_if_missing || fail
 
   local key_path=keys
   user=jgurr   user_create_if_missing || fail
