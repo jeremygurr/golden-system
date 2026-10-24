@@ -6,6 +6,11 @@ if [[ ! -f $simple_path/c2 ]]; then
   exit 1
 fi
 
+if [[ $USER != root ]]; then
+  log_fatal "This script should be run as root"
+  exit 1
+fi
+
 source $simple_path/c2 || exit 1
 
 main() {
@@ -69,7 +74,7 @@ begin_function
   if [[ ! -f /usr/local/bin/herdr ]]; then
     curl -fsSL https://herdr.dev/install.sh -o /tmp/herdr-install.sh
     sh /tmp/herdr-install.sh
-    sudo install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
+    install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
   fi
   
   ports=127.0.0.1:7837:7837 \
