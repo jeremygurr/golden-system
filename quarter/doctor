@@ -10,18 +10,13 @@ source $simple_path/c2 || exit 1
 
 main() {
 
-local clean=${clean:-f} clean_image=${clean_image:-f}
+local clean=${clean:-f} update=${update:-f} clean_image=${clean_image:-f}
 begin_function
 
   local quarter_path=/root/golden-system/quarter
   local ssh_pubkey_path=$quarter_path/keys
 
   identify_os || fail
-
-  # TODO: Need to install herdr on host machine also
-  #   chmod 666 /work/herdr
-  #   forward herdr sockets through ssh
-  #   
 
   uid=9999 \
   user=util    user_create_if_missing || fail
@@ -55,14 +50,14 @@ begin_function
     if ! grep OPENROUTER_API_KEY /home/util/.bashrc &>/dev/null; then
       read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY && {
         echo '************'
-        echo "OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>/home/util/.bashrc || return 1
+        echo "export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>/home/util/.bashrc || return 1
         export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'
       }
     fi
     if ! grep GITHUB_TOKEN /home/util/.bashrc &>/dev/null; then
       read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
         echo '************'
-        echo "GITHUB_TOKEN='$GITHUB_TOKEN'" >>/home/util/.bashrc || return 1
+        echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>/home/util/.bashrc || return 1
         export GITHUB_TOKEN='$GITHUB_TOKEN'
       }
     fi
@@ -70,6 +65,26 @@ begin_function
   fi
 
   chown -R util /home/util /repo /work || fail
+
+  if [[ ! -f /usr/local/bin/herdr ]]; then
+    curl -fsSL https://herdr.dev/install.sh -o /tmp/herdr-install.sh
+    sh /tmp/herdr-install.sh
+    sudo install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
+  fi
+  
+  ports=127.0.0.1:7837:7837 \
+    name=harness \
+    command="herdr server" \
+    volumes="
+      /home/util:/home
+      /repo:/repo
+      /work:/work" \
+    env='HERDR_SOCKET_PATH=/work/herdr.sock' \
+    image=harness \
+    background=t \
+    run_container_if_missing || fail
+
+  chmod 666 /work/herdr* || fail
 
 end_function
 handle_return
