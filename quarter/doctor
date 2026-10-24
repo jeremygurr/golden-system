@@ -95,7 +95,7 @@ begin_function
       /repo:/repo
       /work:/work" \
     envs='HERDR_SOCKET_PATH=/work/herdr.sock
-COMMAND="herdr server"' \
+COMMAND=herdr server' \
     image=harness \
     background=t \
     docker_run_if_missing || fail
