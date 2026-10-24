@@ -89,12 +89,11 @@ begin_function
   fi
 
   name=harness \
-    command="herdr server" \
     volumes="
       /home/util:/home
       /repo:/repo
       /work:/work" \
-    env='HERDR_SOCKET_PATH=/work/herdr.sock' \
+    env='HERDR_SOCKET_PATH=/work/herdr.sock COMMAND="herdr server"' \
     image=harness \
     background=t \
     docker_run_if_missing || fail
