@@ -87,7 +87,7 @@ begin_function
     env='HERDR_SOCKET_PATH=/work/herdr.sock' \
     image=harness \
     background=t \
-    run_container_if_missing || fail
+    docker_run_if_missing || fail
 
   chmod 666 /work/herdr* || fail
 
