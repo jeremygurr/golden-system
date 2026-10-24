@@ -85,7 +85,7 @@ begin_function
   if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
     echo "
  alias d=podman
- alias dl='podman logs -n 100 -f'
+ alias dl='podman logs --tail 100 -f'
  " >~/.bash_aliases
   fi
 
