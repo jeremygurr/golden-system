@@ -77,6 +77,12 @@ begin_function
     install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
   fi
   
+  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
+    echo "
+ alias d=podman
+ " >~/.bash_aliases
+  fi
+
   name=harness \
     command="herdr server" \
     volumes="

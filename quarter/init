@@ -30,12 +30,6 @@ main() {
     pi update --extensions
   fi
 
-  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
-    echo "
- alias d=podmane
- " >~/.bash_aliases
-  fi
-
   if [[ "${COMMAND:-}" ]]; then
     /bin/bash -lc "$COMMAND"
   else
