@@ -60,19 +60,21 @@ begin_function
     if ! grep OPENROUTER_API_KEY /home/util/.bashrc &>/dev/null; then
       read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY && {
         echo '************'
-        echo "export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>/home/util/.bashrc || return 1
+        echo "export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'" >>/home/util/.bashrc || fail
         export OPENROUTER_API_KEY='$OPENROUTER_API_KEY'
       }
     fi
     if ! grep GITHUB_TOKEN /home/util/.bashrc &>/dev/null; then
       read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
         echo '************'
-        echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>/home/util/.bashrc || return 1
+        echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>/home/util/.bashrc || fail
         export GITHUB_TOKEN='$GITHUB_TOKEN'
       }
     fi
 
   fi
+
+  cp $simple_path/c2 /home/util/bin/c2 || fail
 
   chown -R util /home/util /repo /work || fail
 
@@ -94,8 +96,11 @@ begin_function
       /home/util:/home
       /repo:/repo
       /work:/work" \
-    envs='HERDR_SOCKET_PATH=/work/herdr.sock
-COMMAND=herdr server' \
+    envs='
+HERDR_SOCKET_PATH=/work/herdr.sock
+PROMPT_NAME=quarter
+COMMAND=herdr server
+' \
     image=harness \
     background=t \
     docker_run_if_missing || fail

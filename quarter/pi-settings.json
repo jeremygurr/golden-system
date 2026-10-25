@@ -23,6 +23,11 @@
   "httpIdleTimeoutMs": 900000,
   "defaultThinkingLevel": "medium",
   "treeFilterMode": "default",
-  "hideThinkingBlock": true
+  "hideThinkingBlock": true,
+  "enabledModels": [
+    "openrouter/~openai/gpt-luna-latest",
+    "openrouter/~x-ai/grok-latest",
+    "openrouter/~anthropic/claude-opus-latest"
+  ]
 }
 
