@@ -54,7 +54,8 @@ begin_function
 
   if [[ ! -d /home/util/.pi ]]; then
     mkdir -p /home/util/.pi/agent || fail
-    $DOCKER run --rm --name transfer -u root -v /home/util:/home.new -e COMMAND="rsync -a /home/ /home.new/" harness || fail
+    $DOCKER run --rm --name transfer -u root -v /home/util:/home.new harness rsync -a /home/ /home.new/ || fail
+    #$DOCKER run --rm --name transfer -u root -v /home/util:/home.new -e COMMAND="rsync -a /home/ /home.new/" harness || fail
     cp pi-settings.json /home/util/.pi/agent/settings.json || fail
 
     if ! grep OPENROUTER_API_KEY /home/util/.bashrc &>/dev/null; then
