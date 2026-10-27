@@ -16,7 +16,6 @@
     "npm:@haphazarddev/pi-interactive-code-review",
     "npm:pi-double-esc",
     "git:github.com/DietrichGebert/ponytail",
-    "npm:privateer-speak",
     "npm:pi-status-footer",
     "npm:pi-subagents"
   ],
