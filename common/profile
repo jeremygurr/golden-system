@@ -1,7 +1,7 @@
 unalias dr 2>/dev/null
 unset dr 2>/dev/null
 dr_base() {
-  echo 'nice sudo /usr/bin/podman run '$docker_flags' \'
+  echo 'nice /usr/bin/podman run '$docker_flags' \'
   local newline=f params=( "$@" )
   while [[ "$1" ]]; do
     echo -n "  $1 "
@@ -20,7 +20,7 @@ dr_base() {
     fi
   done
 
-  nice sudo /usr/bin/podman run $docker_flags \
+  nice /usr/bin/podman run $docker_flags \
     "${params[@]}" \
 
 }

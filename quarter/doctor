@@ -97,6 +97,7 @@ begin_function
 
   name=harness \
     volumes="
+      /var/run/docker.sock:/var/run/docker.sock
       /home/util:/home
       /repo:/repo
       /work:/work" \
