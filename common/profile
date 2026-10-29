@@ -1,0 +1,78 @@
+unalias dr 2>/dev/null
+unset dr 2>/dev/null
+dr_base() {
+  echo 'nice sudo /usr/bin/podman run '$docker_flags' \'
+  local newline=f params=( "$@" )
+  while [[ "$1" ]]; do
+    echo -n "  $1 "
+    if [[ "$1" == -* && "$1" != *=* ]]; then
+      shift
+      if [[ "${1:-}" == -* ]]; then
+        echo "\\"
+      else
+        echo -ne "$1 "
+        echo "\\"
+        shift
+      fi
+    else
+      echo "\\"
+      shift
+    fi
+  done
+
+  nice sudo /usr/bin/podman run $docker_flags \
+    "${params[@]}" \
+
+}
+
+unalias dr 2>/dev/null
+dr() {
+  local docker_flags='--rm -it'
+  dr_base "$@"
+}
+
+unalias drd 2>/dev/null
+drd() {
+  local docker_flags='--restart unless-stopped -d'
+  dr_base "$@"
+}
+
+sear_start() {
+  if [[ ! -d ~/searxng ]]; then
+    mkdir ~/searxng || return 1
+    echo "# Read the documentation before extending the defaults:
+# https://docs.searxng.org/admin/settings/
+
+use_default_settings: true
+
+server:
+  secret_key: "3PXFgdiq34CPwsGhdoAMEIga1VlG3rGb"
+  image_proxy: true
+  limiter: false
+  public_instance: false
+
+search:
+  safe_search: 0
+  formats:
+    - html
+    - json
+" >~/searxng/settings.yml || return 1
+  fi
+
+  drd --name searxng \
+    -p 8080:8080 \
+    -e SEARXNG_BASE_URL=http://127.0.0.1:8080/ \
+    -v "~/searxng:/etc/searxng" \
+    searxng/searxng:2026.8.29-d226b78bc
+}
+
+sear_stop() {
+  d stop searxng
+  d rm searxng 2>/dev/null
+}
+
+sear_restart() {
+  sear_stop
+  sear_start
+}
+

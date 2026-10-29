@@ -1,0 +1,13 @@
+
+export NO_PROXY=.aexp.com,localhost,127.0.0.1,192.168.0.1
+
+old_proxy() {
+  export {{http,https,all}_proxy,{HTTP,HTTPS,ALL}_PROXY}="http://proxy.aexp.com:8080"
+}
+
+# replaces the above to support copilot
+new_proxy() {
+  export {{http,https,all}_proxy,{HTTP,HTTPS,ALL}_PROXY}="http://127.0.0.1:3636"
+}
+
+new_proxy

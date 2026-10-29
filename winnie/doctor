@@ -41,8 +41,7 @@ begin_function
     mkdir -p $alt_home/.pi/agent || fail
     $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
     cp pi-settings.json $alt_home/.pi/agent/settings.json || fail
-
-    cat profile >>$alt_home/profile || fail
+    cat profile* >>$alt_home/profile || fail
 
     if ! grep GITHUB_TOKEN $alt_home/.bashrc &>/dev/null; then
       read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
