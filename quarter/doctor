@@ -57,6 +57,10 @@ begin_function
     cat profile* >>/home/util/.bashrc || fail
   fi
 
+  if [[ ! -f /home/util/init || $update == t ]]; then
+    cp init /home/util/ || fail
+  fi
+
   if ! grep OPENROUTER_API_KEY /home/util/.bashrc &>/dev/null; then
     read -p "OPENROUTER_API_KEY=" -rs OPENROUTER_API_KEY && {
       echo '************'
@@ -108,6 +112,7 @@ COMMAND=herdr server
 ' \
     image=harness \
     background=t \
+    command="/bin/bash /home/init" \
     docker_run_if_missing || fail
 
   sleep 3
