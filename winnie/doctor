@@ -1,0 +1,89 @@
+simple_path=${c2_path:-~/p/simpleton2}
+system_name=winnie
+system_path=${system_path:-~/p/golden-system/$system_name}
+alt_home=${alt_home:-~/alt-home}
+
+if [[ ! -f $simple_path/c2 ]]; then
+  echo "Missing c2. Either run this in the same folder as c2 or set c2_path to the folder containing it." >&2
+  exit 1
+fi
+
+source $simple_path/c2 || exit 1
+
+main() {
+
+local \
+  clean=${clean:-f} \
+  clean_image=${clean_image:-f} \
+  clean_home=${clean_home:-f} \
+  update=${update:-f} \
+
+begin_function
+
+  identify_os || fail
+
+  export DOCKER=docker
+
+  mkdir -p $alt_home || fail
+
+  pushd $simple_path || fail
+  clean=$clean_image \
+  build_docker_util_image || fail
+  popd
+
+  image=harness \
+    clean=$clean_image \
+    base_folder=$system_path \
+    dockerfile=$system_path/Dockerfile \
+    docker_image_create_if_missing || fail
+
+  if [[ ! -d $alt_home/.pi ]]; then
+    mkdir -p $alt_home/.pi/agent || fail
+    $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
+    cp pi-settings.json $alt_home/.pi/agent/settings.json || fail
+
+    cat profile >>$alt_home/profile || fail
+
+    if ! grep GITHUB_TOKEN $alt_home/.bashrc &>/dev/null; then
+      read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
+        echo '************'
+        echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>$alt_home/.bashrc || fail
+        export GITHUB_TOKEN='$GITHUB_TOKEN'
+      }
+    fi
+
+  fi
+
+  cp $simple_path/c2 $alt_home/bin/c2 || fail
+
+  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
+    echo "
+ alias d=podman
+ alias dl='podman logs --tail 100 -f'
+ " >~/.bash_aliases
+  fi
+
+  name=harness \
+    volumes="
+      $alt_home:/home
+      /repo:/repo
+      /work:/work" \
+    envs='
+HERDR_SOCKET_PATH=/work/herdr.sock
+PROMPT_NAME=$system_name
+COMMAND=herdr server
+' \
+    image=harness \
+    background=t \
+    docker_run_if_missing || fail
+
+  sleep 1
+  chmod 666 /work/herdr* || fail
+
+end_function
+handle_return
+
+}
+
+main || exit 1
+

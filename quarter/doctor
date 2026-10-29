@@ -7,7 +7,7 @@ if [[ ! -f $simple_path/c2 ]]; then
 fi
 
 if [[ $USER != root ]]; then
-  log_fatal "This script should be run as root"
+  echo "This script should be run as root" >&2
   exit 1
 fi
 

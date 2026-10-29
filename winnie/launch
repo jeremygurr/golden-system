@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+DOCKER=${DOCKER:-podman}
+debug=${debug:-f}
+
+if [[ $debug == t ]]; then
+  $DOCKER run -p 127.0.0.1:7837:7837 -it --rm --name harness \
+    -v /home/util:/home \
+    -v /repo:/repo \
+    -v /work:/work \
+    -e HERDR_SOCKET_PATH=/work/herdr.sock \
+    harness "$@"
+else
+  echo "Launching herdr server..."
+  $DOCKER run -p 127.0.0.1:7837:7837 -d --rm --name harness \
+    -e COMMAND="herdr server" \
+    -v /home/util:/home \
+    -v /repo:/repo \
+    -v /work:/work \
+    -e HERDR_SOCKET_PATH=/work/herdr.sock \
+    harness
+fi
+
