@@ -22,12 +22,16 @@ main() {
 
   repo_path=/repo/sorcery-skills \
   repo=https://github.com/jeremygurr/sorcery-skills.git \
-  skills_add_if_missing || return 1
+  repo_skills_add_if_missing || return 1
 
   repo_path=/repo/matt-skills \
   repo=https://github.com/mattpocock/skills.git \
   skills='skills/engineering skills/productivity' \
-  skills_add_if_missing || return 1
+  repo_skills_add_if_missing || return 1
+
+  repo=kunchenguid/lavish-axi \
+  skills=lavish \
+  npx_skills_add_if_missing || return 1
 
   if [[ $update == t ]]; then
     pi update
