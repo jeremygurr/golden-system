@@ -161,7 +161,7 @@ search:
       PROMPT_NAME=quarter-sear
       SEARXNG_BASE_URL=http://127.0.0.1:8080/
       ' \
-    image=searxng/searxng:2026.8.29-d226b78bc \
+    image=docker.io/searxng/searxng:2026.8.29-d226b78bc \
     background=t \
     network=main \
     docker_run_if_missing || fail
