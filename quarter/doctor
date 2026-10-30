@@ -106,16 +106,67 @@ begin_function
       /work:/work" \
     ports='127.0.0.1:80:8000' \
     envs='
-HERDR_SOCKET_PATH=/work/herdr.sock
-PROMPT_NAME=quarter
-COMMAND=herdr server
-' \
+      HERDR_SOCKET_PATH=/work/herdr.sock
+      PROMPT_NAME=quarter
+      COMMAND=herdr server
+      ' \
     image=harness \
     background=t \
+    network=main \
     command="/bin/bash /home/init" \
     docker_run_if_missing || fail
 
-  sleep 3
+  name=main \
+  docker_network_create_if_missing || fail
+
+  if [[ ! -d /home/util/searxng ]]; then
+    mkdir /home/util/searxng || fail
+    echo "# Read the documentation before extending the defaults:
+# https://docs.searxng.org/admin/settings/
+
+use_default_settings: true
+
+server:
+  secret_key: "3PXFgdiq34CPwsGhdoAMEIga1VlG3rGb"
+  image_proxy: true
+  limiter: false
+  public_instance: false
+
+search:
+  safe_search: 0
+  formats:
+    - html
+    - json
+" >/home/util/searxng/settings.yml || fail
+  fi
+
+  if [[ ! -f /home/util/.config/rpiv-web-tools/config.json ]]; then
+    mkdir -p /home/util/.config/rpiv-web-tools || fail
+    echo '
+{
+  "provider": "searxng",
+  "baseUrls": {
+    "searxng": "http://sear:8080"
+  },
+  "apiKeys": {
+    "searxng": "3PXFgdiq34CPwsGhdoAMEIga1VlG3rGb"
+  }
+}
+    ' >/home/util/.config/rpiv-web-tools/config.json || fail
+  fi
+  
+  name=sear \
+    volumes="/home/util/searxng:/etc/searxng"
+    envs='
+      PROMPT_NAME=quarter-sear
+      SEARXNG_BASE_URL=http://127.0.0.1:8080/
+      ' \
+    image=searxng/searxng:2026.8.29-d226b78bc \
+    background=t \
+    network=main \
+    docker_run_if_missing || fail
+
+  sleep 2
   chmod 666 /work/herdr* || fail
 
 end_function
