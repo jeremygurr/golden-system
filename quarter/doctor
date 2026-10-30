@@ -99,6 +99,9 @@ begin_function
  " >~/.bash_aliases
   fi
 
+  name=main \
+  docker_network_create_if_missing || fail
+
   name=harness \
     volumes="
       /home/util:/home
@@ -115,9 +118,6 @@ begin_function
     network=main \
     command="/bin/bash /home/init" \
     docker_run_if_missing || fail
-
-  name=main \
-  docker_network_create_if_missing || fail
 
   if [[ ! -d /home/util/searxng ]]; then
     mkdir /home/util/searxng || fail
