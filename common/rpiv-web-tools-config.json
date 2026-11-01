@@ -1,0 +1,9 @@
+{
+  "provider": "searxng",
+  "baseUrls": {
+    "searxng": "http://sear:8080"
+  },
+  "apiKeys": {
+    "searxng": "3PXFgdiq34CPwsGhdoAMEIga1VlG3rGb"
+  }
+}

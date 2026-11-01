@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 simple_path=${c2_path:-~/p/simpleton2}
 system_name=winnie
 system_path=${system_path:-~/p/golden-system/$system_name}
@@ -25,6 +27,12 @@ begin_function
   export DOCKER=docker
 
   mkdir -p $alt_home || fail
+
+  export ALPINE_IMAGE=artifactory.aexp.com:443/dockerproxy/alpine:3.24.2
+  export ALPINE_REPO=https://artifactory.aexp.com/artifactory/alpine-raw/
+  export NO_PROXY=.aexp.com,localhost,127.0.0.1,192.168.0.1
+  export HTTPS_PROXY=http://proxy.aexp.com:8080
+  export HTTP_PROXY=http://proxy.aexp.com:8080
 
   pushd $simple_path || fail
   clean=$clean_image \
@@ -62,6 +70,9 @@ begin_function
  " >~/.bash_aliases
   fi
 
+  name=main \
+  docker_network_create_if_missing || fail
+
   name=harness \
     volumes="
       /var/run/docker.sock:/var/run/docker.sock
@@ -69,15 +80,37 @@ begin_function
       /repo:/repo
       /work:/work" \
     envs='
-HERDR_SOCKET_PATH=/work/herdr.sock
-PROMPT_NAME=$system_name
-COMMAND=herdr server
-' \
+      HERDR_SOCKET_PATH=/work/herdr.sock
+      PROMPT_NAME=$system_name
+      COMMAND=herdr server
+      ' \
     image=harness \
     background=t \
     docker_run_if_missing || fail
 
-  sleep 1
+  if [[ ! -d /home/util/searxng ]]; then
+    mkdir $alt_home/searxng || fail
+    cp common/searxng-settings.yml $alt_home/searxng/settings.yml || fail
+  fi
+
+  if [[ ! -f $alt_home/.config/rpiv-web-tools/config.json ]]; then
+    mkdir -p $alt_home/.config/rpiv-web-tools || fail
+    cp common/rpiv-web-tools-config.json $alt_home/.config/rpiv-web-tools/config.json || fail
+  fi
+  
+  name=sear \
+    volumes="$alt_home/searxng:/etc/searxng"
+    envs='
+      PROMPT_NAME=quarter-sear
+      SEARXNG_BASE_URL=http://127.0.0.1:8080/
+      {{http,https,all}_proxy,{HTTP,HTTPS,ALL}_PROXY}=http://127.0.0.1:3636
+      ' \
+    image=docker.io/searxng/searxng:2026.8.29-d226b78bc \
+    background=t \
+    network=main \
+    docker_run_if_missing || fail
+
+  sleep 2
   chmod 666 /work/herdr* || fail
 
 end_function
