@@ -76,10 +76,9 @@ begin_function
 
   name=harness \
     volumes="
-      /var/run/docker.sock:/var/run/docker.sock
       $alt_home:/home
-      /repo:/repo
-      /work:/work" \
+      ~/work:/work
+      " \
     envs='
       HERDR_SOCKET_PATH=/work/herdr.sock
       PROMPT_NAME=$system_name
@@ -89,14 +88,14 @@ begin_function
     background=t \
     docker_run_if_missing || fail
 
-  if [[ ! -d /home/util/searxng ]]; then
+  if [[ ! -d $alt_home/searxng ]]; then
     mkdir $alt_home/searxng || fail
-    cp common/searxng-settings.yml $alt_home/searxng/settings.yml || fail
+    cp ../common/searxng-settings.yml $alt_home/searxng/settings.yml || fail
   fi
 
   if [[ ! -f $alt_home/.config/rpiv-web-tools/config.json ]]; then
     mkdir -p $alt_home/.config/rpiv-web-tools || fail
-    cp common/rpiv-web-tools-config.json $alt_home/.config/rpiv-web-tools/config.json || fail
+    cp ../common/rpiv-web-tools-config.json $alt_home/.config/rpiv-web-tools/config.json || fail
   fi
   
   name=sear \
@@ -112,7 +111,7 @@ begin_function
     docker_run_if_missing || fail
 
   sleep 2
-  chmod 666 /work/herdr* || fail
+  chmod 666 ~/work/herdr* || fail
 
 end_function
 handle_return
