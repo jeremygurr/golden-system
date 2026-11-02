@@ -43,6 +43,7 @@ begin_function
     clean=$clean_image \
     base_folder=$system_path \
     dockerfile=$system_path/Dockerfile \
+    build_args='HTTP_PROXY HTTPS_PROXY NO_PROXY' \
     docker_image_create_if_missing || fail
 
   if [[ ! -d $alt_home/.pi ]]; then

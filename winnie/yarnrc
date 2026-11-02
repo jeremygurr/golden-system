@@ -1,0 +1,4 @@
+# yarn@1
+# avoid lookups to https://yarnpkg.com/latest-version
+disable-self-update-check true
+

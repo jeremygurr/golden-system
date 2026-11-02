@@ -1,0 +1,3 @@
+# yarn@2 https://yarnpkg.com/configuration/yarnrc
+npmRegistryServer: "https://artifactory.aexp.com/api/npm/npm"
+

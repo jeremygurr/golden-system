@@ -1,0 +1,45 @@
+# npm and yarn@1 https://docs.npmjs.com/cli/v8/configuring-npm/npmrc
+# https://aexp.atlassian.net/wiki/spaces/NOD/pages/2143571519/kitchen+sink+.npmrc+for+Amex
+# https://aexp.atlassian.net/wiki/spaces/NOD/pages/702414933/Registry+of+Registries
+registry=https://artifactory.aexp.com/api/npm/npm
+# better GI Artifactory setup, one day? https://aexp.enterprise.slack.com/archives/C02MAK53205/p1637010598018600
+# registry=https://artifactory.aexp.com/api/npm/registry.npmjs.com
+# @americanexpress:registry=https://artifactory.aexp.com/api/npm/americanexpress-internal
+# defaults for $ npm init
+# do not use ISC, even for OSS
+init-license=UNLICENSED
+#init-author-name=Your Name
+#init-author-email=Your.Email.Address@aexp.com
+# don't use the internet proxy
+proxy=null
+https-proxy=null
+# enable if you use https://docs.npmjs.com/cli/v11/configuring-npm/package-json#engines
+# engine-strict=true
+# dependencies with binary downloads
+sass_binary_site=https://artifactory.aexp.com/github-node-sass/download
+# skipping phantomjs-prebuilt, don't use it
+couchbase_binary_host_mirror=https://artifactory.aexp.com/github-couchbase/download
+# puppeteer_download_host is deprecated for newer versions in favor of puppeteer_download_base_url
+# but the mirror for the latter is not set up yet
+puppeteer_download_host=https://artifactory.aexp.com/google-storage-chromium-browser
+# see https://aexp-mobile-and-web.slack.com/archives/C7SS3V8TA/p1690409882141799?thread_ts=1690368173.211549&cid=C7SS3V8TA
+# puppeteer_download_base_url=
+# chromedriver should point to https://artifactory.aexp.com/googlechromelabs-generic-proxy/
+# but that mirror points to the internet instead of another mirror, like https://artifactory.aexp.com/google-storage-chromium-browser
+chromedriver_cdnurl=
+# yeah, uppercase https://github.com/ibmdb/node-ibm_db/blob/479d78a53411c5ca99864907f06c9c67a523808d/installer/driverInstall.js#L55-L56
+IBM_DB_INSTALLER_URL=https://artifactory.aexp.com/node-ibm-db
+electron_mirror=https://artifactory.aexp.com/electron-binaries/
+node_sqlite3_binary_host_mirror=https://artifactory.aexp.com/node_sqlite3/
+fse_binary_host_mirror=https://artifactory.aexp.com/node_fsevents/
+# note that grpc is deprecated, use @grpc/grpc-js instead
+grpc_node_binary_host_mirror=https://artifactory.aexp.com/gprc_node_bindings/
+geckodriver_cdnurl=https://artifactory.aexp.com/node-geckodriver-binaries/
+# mongodb-memory-server doesn't support npm configuration
+snappy_binary_host_mirror=https://artifactory.aexp.com/node-snappy-bindings-github-proxy/
+# playwright
+# playwright seems to be using azure edge for all browsers in newer versions
+# for older versions you may need to enable this different chromium host
+# playwright_chromium_download_host=https://artifactory.aexp.com/google-storage-chromium-browser
+playwright_download_host=https://artifactory.aexp.com/playwright-azureedge-raw-proxy
+
