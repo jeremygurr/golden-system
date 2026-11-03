@@ -33,7 +33,6 @@ main() {
   skills=lavish \
   npx_skills_add_if_missing || return 1
 
-  set -x
   if [[ $update == t ]]; then
     pi update
     pi update --extensions
@@ -45,11 +44,11 @@ main() {
   fi
 
   if [[ "${COMMAND:-}" ]]; then
-    /bin/bash -lc $COMMAND
+    #/bin/bash -lc $COMMAND
+    $COMMAND
   else
     /bin/bash -l
   fi
-  set +x
 
 }
 

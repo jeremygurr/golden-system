@@ -26,8 +26,6 @@ begin_function
 
   export DOCKER=docker
 
-  mkdir -p $alt_home || fail
-
   export ALPINE_IMAGE=artifactory.aexp.com:443/dockerproxy/alpine:3.24.2
   export ALPINE_REPO=https://artifactory.aexp.com/artifactory/alpine-raw/
   export NO_PROXY=.aexp.com,localhost,127.0.0.1,192.168.0.1
@@ -35,8 +33,12 @@ begin_function
   export HTTP_PROXY=http://proxy.aexp.com:8080
 
   if [[ $clean == t ]]; then
+    log_verbose "Cleaning home folder at $alt_home"
+    rm -rf $alt_home
     update=t
   fi
+
+  mkdir -p $alt_home || fail
 
   pushd $simple_path || fail
   clean=$clean_image \
@@ -50,10 +52,13 @@ begin_function
     build_args='HTTP_PROXY HTTPS_PROXY NO_PROXY' \
     docker_image_create_if_missing || fail
 
+  if [[ ! -d $alt_home/.bashrc ]]; then
+    $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
+  fi
+
   if [[ ! -d $alt_home/.pi || $update == t ]]; then
     log_verbose "Building .pi in $alt_home"
     mkdir -p $alt_home/.pi/agent || fail
-    $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
     cp pi-settings.json $alt_home/.pi/agent/settings.json || fail
   fi
 
@@ -120,7 +125,7 @@ begin_function
       COMMAND=herdr server
       " \
     image=harness \
-    background=t \
+    background=f \
     command="/bin/bash /home/init" \
     docker_run_if_missing || fail
 
