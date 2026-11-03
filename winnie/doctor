@@ -34,6 +34,10 @@ begin_function
   export HTTPS_PROXY=http://proxy.aexp.com:8080
   export HTTP_PROXY=http://proxy.aexp.com:8080
 
+  if [[ $clean == t ]]; then
+    update=t
+  fi
+
   pushd $simple_path || fail
   clean=$clean_image \
   build_docker_util_image || fail
@@ -47,12 +51,19 @@ begin_function
     docker_image_create_if_missing || fail
 
   if [[ ! -d $alt_home/.pi || $update == t ]]; then
+    log_verbose "Building .pi in $alt_home"
     mkdir -p $alt_home/.pi/agent || fail
     $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
     cp pi-settings.json $alt_home/.pi/agent/settings.json || fail
   fi
 
+  if [[ ! -d ~/repo ]]; then
+    log_verbose "Building repo in $alt_home"
+    mkdir ~/repo || fail
+  fi
+
   if [[ ! -f $alt_home/profile || $update == t ]]; then
+    log_verbose "Building profile in $alt_home"
     cat profile* >>$alt_home/profile || fail
   fi
 
@@ -64,26 +75,24 @@ begin_function
     }
   fi
 
-  if ! grep GITHUB_TOKEN $alt_home/.bashrc &>/dev/null; then
-    read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
-      echo '************'
-      echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>$alt_home/.bashrc || fail
-      export GITHUB_TOKEN='$GITHUB_TOKEN'
-
-      read -p "GITHUB_USER=" -r GITHUB_USER
-      echo "export GITHUB_USER=$GITHUB_USER" >>$alt_home/.bashrc || fail
-      export GITHUB_USER='$GITHUB_USER'
-    }
+  if ! grep GITHUB_USER $alt_home/.bashrc &>/dev/null; then
+    read -p "GITHUB_USER=" -r GITHUB_USER
+    echo "export GITHUB_USER=$GITHUB_USER" >>$alt_home/.bashrc || fail
+    export GITHUB_USER='$GITHUB_USER'
   fi
 
-
   if [[ ! -f $alt_home/init || $update == t ]]; then
+    log_verbose "Building init in $alt_home"
     cp init $alt_home/ || fail
   fi
 
-  cp $simple_path/c2 $alt_home/bin/c2 || fail
+  if [[ ! -f $alt_home/bin/c2 || $update == t ]]; then
+    log_verbose "Building c2 in $alt_home"
+    cp $simple_path/c2 $alt_home/bin/c2 || fail
+  fi
 
-  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
+  if [[ ! -f ~/.bash_aliases || $update == t ]]; then
+    log_verbose "Building .bash_aliases in $alt_home"
     echo "
  alias d=podman
  alias dl='podman logs --tail 100 -f'
@@ -91,6 +100,7 @@ begin_function
   fi
 
   if [[ ! -f $alt_home/.config/rpiv-web-tools/config.json ]]; then
+    log_verbose "Building rpiv-web-tools in $alt_home"
     mkdir -p $alt_home/.config/rpiv-web-tools || fail
     cp ../common/rpiv-web-tools-config.json $alt_home/.config/rpiv-web-tools/config.json || fail
   fi
@@ -101,6 +111,7 @@ begin_function
   name=harness \
     volumes="
       $alt_home:/home
+      ~/repo:/repo
       ~/work:/work
       " \
     envs="
@@ -109,11 +120,12 @@ begin_function
       COMMAND=herdr server
       " \
     image=harness \
-    background=f \
+    background=t \
     command="/bin/bash /home/init" \
     docker_run_if_missing || fail
 
   if [[ ! -d $alt_home/searxng ]]; then
+    log_verbose "Building searxng in $alt_home"
     mkdir $alt_home/searxng || fail
     cp ../common/searxng-settings.yml $alt_home/searxng/settings.yml || fail
   fi
