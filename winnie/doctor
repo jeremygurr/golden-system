@@ -32,7 +32,7 @@ begin_function
   export HTTPS_PROXY=http://proxy.aexp.com:8080
   export HTTP_PROXY=http://proxy.aexp.com:8080
 
-  if [[ $clean == t ]]; then
+  if [[ $clean == t && -e $alt_home ]]; then
     log_verbose "Cleaning home folder at $alt_home"
     rm -rf $alt_home
     update=t
@@ -52,9 +52,10 @@ begin_function
     build_args='HTTP_PROXY HTTPS_PROXY NO_PROXY' \
     docker_image_create_if_missing || fail
 
-  if [[ ! -d $alt_home/.bashrc ]]; then
-    log_verbose "Syncing home from util image to $alt_home..."
-    $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
+  if [[ ! -f $alt_home/.bashrc ]]; then
+    log_verbose "Syncing home from harness image to $alt_home..."
+    log_verbose $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harncwess rsync -a /home/ /home.new/ 
+    $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -av /home/ /home.new/ || fail
   fi
 
   if [[ ! -d $alt_home/.pi || $update == t ]]; then
@@ -109,6 +110,11 @@ begin_function
     log_verbose "Building rpiv-web-tools in $alt_home"
     mkdir -p $alt_home/.config/rpiv-web-tools || fail
     cp ../common/rpiv-web-tools-config.json $alt_home/.config/rpiv-web-tools/config.json || fail
+  fi
+
+  if [[ ! -d ~/work ]]; then
+    log_verbose "Building ~/work"
+    mkdir -p ~/work || fail
   fi
   
   name=main \
