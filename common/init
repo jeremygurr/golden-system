@@ -38,9 +38,9 @@ main() {
     pi update --extensions
   fi
 
-  if [[ ! -f /home/.git-credentials ]]; then
+  if [[ ! -f /home/.git-credentials && "$GITHUB_TOKEN" && "$GITHUB_USER" ]]; then
     git config --global credential.helper store || fail
-    echo "https://divcity:$GITHUB_TOKEN" >~/.git-credentials || fail
+    echo "https://$GITHUB_USER:$GITHUB_TOKEN" >~/.git-credentials || fail
   fi
 
   if [[ "${COMMAND:-}" ]]; then

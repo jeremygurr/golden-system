@@ -75,7 +75,9 @@ begin_function
     read -p "GITHUB_TOKEN=" -rs GITHUB_TOKEN && {
       echo '************'
       echo "export GITHUB_TOKEN='$GITHUB_TOKEN'" >>/home/util/.bashrc || fail
+      echo "export GITHUB_USER=divcity" >>/home/util/.bashrc || fail
       export GITHUB_TOKEN='$GITHUB_TOKEN'
+      export GITHUB_USER='$GITHUB_USER'
     }
   fi
 
