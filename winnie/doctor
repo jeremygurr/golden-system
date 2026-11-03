@@ -40,10 +40,10 @@ begin_function
 
   mkdir -p $alt_home || fail
 
-  pushd $simple_path || fail
+  pushd $simple_path &>/dev/null || fail
   clean=$clean_image \
   build_docker_util_image || fail
-  popd
+  popd &>/dev/null || fail
 
   image=harness \
     clean=$clean_image \
@@ -53,6 +53,7 @@ begin_function
     docker_image_create_if_missing || fail
 
   if [[ ! -d $alt_home/.bashrc ]]; then
+    log_verbose "Syncing home from util image to $alt_home..."
     $DOCKER run --rm --name transfer -u root -v $alt_home:/home.new harness rsync -a /home/ /home.new/ || fail
   fi
 
@@ -113,21 +114,22 @@ begin_function
   name=main \
   docker_network_create_if_missing || fail
 
-  name=harness \
-    volumes="
-      $alt_home:/home
-      ~/repo:/repo
-      ~/work:/work
-      " \
-    envs="
-      HERDR_SOCKET_PATH=/work/herdr.sock
-      PROMPT_NAME=$system_name
-      COMMAND=herdr server
-      " \
-    image=harness \
-    background=f \
-    command="/bin/bash /home/init" \
-    docker_run_if_missing || fail
+#  name=harness \
+#    volumes="
+#      $alt_home:/home
+#      ~/repo:/repo
+#      ~/work:/work
+#      " \
+#    envs="
+#      HERDR_SOCKET_PATH=/work/herdr.sock
+#      PROMPT_NAME=$system_name
+#      COMMAND=herdr server
+#      " \
+#    image=harness \
+#    background=f \
+#    command="/bin/bash /home/init" \
+#    docker_run_if_missing || fail
+#
 
   if [[ ! -d $alt_home/searxng ]]; then
     log_verbose "Building searxng in $alt_home"

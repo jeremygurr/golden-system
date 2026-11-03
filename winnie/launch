@@ -1,23 +1,25 @@
 #!/usr/bin/env bash
 
-DOCKER=${DOCKER:-podman}
-debug=${debug:-f}
+simple_path=${c2_path:-~/p/simpleton2}
+DOCKER=${DOCKER:-docker}
+alt_home=${alt_home:-~/alt-home}
+system_name=winnie
 
-if [[ $debug == t ]]; then
-  $DOCKER run -p 127.0.0.1:7837:7837 -it --rm --name harness \
-    -v /home/util:/home \
-    -v /repo:/repo \
-    -v /work:/work \
-    -e HERDR_SOCKET_PATH=/work/herdr.sock \
-    harness "$@"
-else
-  echo "Launching herdr server..."
-  $DOCKER run -p 127.0.0.1:7837:7837 -d --rm --name harness \
-    -e COMMAND="herdr server" \
-    -v /home/util:/home \
-    -v /repo:/repo \
-    -v /work:/work \
-    -e HERDR_SOCKET_PATH=/work/herdr.sock \
-    harness
-fi
+source $simple_path/c2 || exit 1
+
+echo "Launching sandbox..."
+name=harness \
+  volumes="
+    $alt_home:/home
+    ~/repo:/repo
+    ~/work:/work
+    " \
+  envs="
+    HERDR_SOCKET_PATH=/work/herdr.sock
+    PROMPT_NAME=$system_name
+    " \
+  image=harness \
+  background=f \
+  command="/bin/bash /home/init" \
+  docker_run_if_missing
 
