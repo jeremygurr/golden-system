@@ -133,12 +133,12 @@ begin_function
 
   if [[ ! -d /home/util/searxng || $update == t ]]; then
     mkdir -p /home/util/searxng || fail
-    cp common/searxng-settings.yml /home/util/searxng/settings.yml || fail
+    cp searxng-settings.yml /home/util/searxng/settings.yml || fail
   fi
 
   if [[ ! -f /home/util/.config/rpiv-web-tools/config.json || $update == t ]]; then
     mkdir -p /home/util/.config/rpiv-web-tools || fail
-    cp common/rpiv-web-tools-config.json /home/util/.config/rpiv-web-tools/config.json || fail
+    cp rpiv-web-tools-config.json /home/util/.config/rpiv-web-tools/config.json || fail
   fi
   
   name=sear \
