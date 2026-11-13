@@ -28,6 +28,10 @@ begin_function
   local quarter_path=/root/golden-system/quarter
   local ssh_pubkey_path=$quarter_path/keys
 
+  if [[ $clean == t && $update == f ]]; then
+    update=t
+  fi
+
   identify_os || fail
 
   uid=9999 \
@@ -81,14 +85,14 @@ begin_function
     }
   fi
 
-  if [[ ! -d /home/util/.pi ]]; then
+  if [[ ! -d /home/util/.pi || $update == t ]]; then
     mkdir -p /home/util/.pi/agent || fail
     cp pi-settings.json /home/util/.pi/agent/settings.json || fail
   fi
 
   cp $simple_path/c2 /home/util/bin/c2 || fail
 
-  chown -R util /home/util /repo /work || fail
+  chown -R util /home/util /repo /work /data || fail
 
   if [[ ! -f /usr/local/bin/herdr ]]; then
     curl -fsSL https://herdr.dev/install.sh -o /tmp/herdr-install.sh
@@ -96,7 +100,7 @@ begin_function
     install -m 755 "$HOME/.local/bin/herdr" /usr/local/bin/herdr
   fi
   
-  if [[ ! -f ~/.bash_aliases || $clean == t ]]; then
+  if [[ ! -f ~/.bash_aliases || $update == t ]]; then
     echo "
  alias d=podman
  alias dl='podman logs --tail 100 -f'
@@ -120,7 +124,6 @@ begin_function
     envs='
       HERDR_SOCKET_PATH=/work/herdr.sock
       PROMPT_NAME=quarter
-      COMMAND=herdr server
       ' \
     image=harness \
     background=t \
@@ -128,12 +131,12 @@ begin_function
     command="/bin/bash /home/init" \
     docker_run_if_missing || fail
 
-  if [[ ! -d /home/util/searxng ]]; then
-    mkdir /home/util/searxng || fail
+  if [[ ! -d /home/util/searxng || $update == t ]]; then
+    mkdir -p /home/util/searxng || fail
     cp common/searxng-settings.yml /home/util/searxng/settings.yml || fail
   fi
 
-  if [[ ! -f /home/util/.config/rpiv-web-tools/config.json ]]; then
+  if [[ ! -f /home/util/.config/rpiv-web-tools/config.json || $update == t ]]; then
     mkdir -p /home/util/.config/rpiv-web-tools || fail
     cp common/rpiv-web-tools-config.json /home/util/.config/rpiv-web-tools/config.json || fail
   fi
@@ -149,8 +152,8 @@ begin_function
     network=main \
     docker_run_if_missing || fail
 
-  sleep 2
-  chmod 666 /work/herdr* || fail
+  #sleep 2
+  #chmod 666 /work/herdr* || fail
 
 end_function
 handle_return
