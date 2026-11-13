@@ -15,12 +15,12 @@ USER root
 RUN curl -fsSL https://pi.dev/install.sh | sh
 RUN curl -fsSL https://herdr.dev/install.sh | sh
 
-RUN npm install -g @jmfederico/pi-web --allow-scripts=node-pty
-
 RUN mkdir -p /repo
 RUN chown -R util /home /work /repo
 
 USER util
+
+RUN npm install -g @jmfederico/pi-web --allow-scripts=node-pty
 
 #RUN pi update
 #RUN pi update --extensions
