@@ -11,10 +11,6 @@ ENV HTTPS_PROXY=$HTTPS_PROXY
 
 USER root
 
-COPY npmrc /home/.npmrc
-COPY yarnrc /home/.yarnrc
-COPY yarnrc.yml /home/.yarnrc.yml
-
 #RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 RUN curl -fsSL https://pi.dev/install.sh | sh
 RUN curl -fsSL https://herdr.dev/install.sh | sh
