@@ -42,7 +42,7 @@ begin_function
   user=jmgurr  user_create_if_missing || fail
   user=divcity user_create_if_missing || fail
 
-  mkdir -p /repo /work || fail
+  mkdir -p /repo /work /data || fail
 
   packages=podman install_if_missing || fail
   export DOCKER=podman
