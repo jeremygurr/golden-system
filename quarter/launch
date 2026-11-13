@@ -15,7 +15,8 @@ $DOCKER run \
   -p 127.0.0.1:80:8000 \
   -p 127.0.0.1:8504:8504 \
   -p 127.0.0.1:4387:4387 \
-  -d --rm --name harness \
+  --rm \
+  --name harness \
   -it \
   -e COMMAND="$COMMAND" \
   -v /home/util:/home \
