@@ -4,20 +4,21 @@ DOCKER=${DOCKER:-podman}
 debug=${debug:-f}
 
 if [[ $debug == t ]]; then
-  $DOCKER run -p 127.0.0.1:7837:7837 -it --rm --name harness \
-    -v /home/util:/home \
-    -v /repo:/repo \
-    -v /work:/work \
-    -e HERDR_SOCKET_PATH=/work/herdr.sock \
-    harness "$@"
+  COMMAND=
 else
-  echo "Launching herdr server..."
-  $DOCKER run -p 127.0.0.1:7837:7837 -d --rm --name harness \
-    -e COMMAND="herdr server" \
-    -v /home/util:/home \
-    -v /repo:/repo \
-    -v /work:/work \
-    -e HERDR_SOCKET_PATH=/work/herdr.sock \
-    harness
+  COMMAND="herdr server"
 fi
 
+echo "Launching herdr server..."
+$DOCKER run \
+  -p 127.0.0.1:7837:7837 \
+  -p 127.0.0.1:80:8000 \
+  -p 127.0.0.1:8504:8504 \
+  -p 127.0.0.1:4387:4387 \
+  -d --rm --name harness \
+  -e COMMAND="$COMMAND" \
+  -v /home/util:/home \
+  -v /repo:/repo \
+  -v /work:/work \
+  -e HERDR_SOCKET_PATH=/work/herdr.sock \
+  harness
