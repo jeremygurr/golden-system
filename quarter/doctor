@@ -111,7 +111,12 @@ begin_function
       /home/util:/home
       /repo:/repo
       /work:/work" \
-    ports='127.0.0.1:80:8000' \
+    ports='
+      127.0.0.1:80:8000
+      127.0.0.1:7837:7837
+      127.0.0.1:8504:8504
+      127.0.0.1:4387:4387
+      ' \
     envs='
       HERDR_SOCKET_PATH=/work/herdr.sock
       PROMPT_NAME=quarter
