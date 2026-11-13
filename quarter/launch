@@ -4,9 +4,9 @@ DOCKER=${DOCKER:-podman}
 debug=${debug:-f}
 
 if [[ $debug == t ]]; then
-  COMMAND=
+  COMMAND=/bin/bash
 else
-  COMMAND="herdr server"
+  COMMAND=
 fi
 
 echo "Launching herdr server..."
@@ -16,6 +16,7 @@ $DOCKER run \
   -p 127.0.0.1:8504:8504 \
   -p 127.0.0.1:4387:4387 \
   -d --rm --name harness \
+  -it \
   -e COMMAND="$COMMAND" \
   -v /home/util:/home \
   -v /repo:/repo \
