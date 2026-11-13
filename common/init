@@ -39,17 +39,52 @@ main() {
   fi
 
   if [[ ! -f /home/.git-credentials && "$GITHUB_TOKEN" && "$GITHUB_USER" ]]; then
-    git config --global credential.helper store || fail
-    echo "https://$GITHUB_USER:$GITHUB_TOKEN" >~/.git-credentials || fail
+    git config --global credential.helper store || return 1
+    echo "https://$GITHUB_USER:$GITHUB_TOKEN" >~/.git-credentials || return 1
   fi
-
-  pi-web install
 
   if [[ "${COMMAND:-}" ]]; then
     #/bin/bash -lc $COMMAND
     $COMMAND
   else
-    /bin/bash -l
+    pi-web install || return 1
+
+    export PI_WEB_DATA_DIR="${PI_WEB_DATA_DIR:-/data/pi-web}"
+    export PI_WEB_SESSIOND_SOCKET="${PI_WEB_SESSIOND_SOCKET:-$PI_WEB_DATA_DIR/sessiond.sock}"
+    export PI_WEB_HOST="${PI_WEB_HOST:-0.0.0.0}"
+    export PI_WEB_PORT="${PI_WEB_PORT:-8504}"
+
+    mkdir -p "$PI_WEB_DATA_DIR" || return 1
+
+    # Clean up stale socket on restart
+    rm -f "$PI_WEB_SESSIOND_SOCKET"
+
+    # Start session daemon in background
+    pi-web-sessiond &
+    SESSIOND_PID=$!
+
+    # Wait until the socket appears (up to ~30s)
+    i=0
+    while [ ! -S "$PI_WEB_SESSIOND_SOCKET" ] && [ $i -lt 30 ]; do
+      sleep 1
+      i=$((i + 1))
+    done
+
+    if [ ! -S "$PI_WEB_SESSIOND_SOCKET" ]; then
+      echo "session daemon socket never appeared" >&2
+      kill "$SESSIOND_PID" 2>/dev/null || true
+      exit 1
+    fi
+
+    # Start web server in background
+    pi-web-server &
+    WEB_PID=$!
+
+    # Forward signals and wait for either process to exit
+    trap 'kill "$SESSIOND_PID" "$WEB_PID" 2>/dev/null || true; wait' TERM INT
+
+    # Wait for both; exit when either dies
+    wait "$SESSIOND_PID" "$WEB_PID"
   fi
 
 }
