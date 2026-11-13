@@ -43,6 +43,8 @@ main() {
     echo "https://$GITHUB_USER:$GITHUB_TOKEN" >~/.git-credentials || fail
   fi
 
+  pi-web install
+
   if [[ "${COMMAND:-}" ]]; then
     #/bin/bash -lc $COMMAND
     $COMMAND

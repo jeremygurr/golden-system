@@ -17,8 +17,10 @@ COPY yarnrc.yml /home/.yarnrc.yml
 
 #RUN npm install -g --ignore-scripts @earendil-works/pi-coding-agent
 RUN curl -fsSL https://pi.dev/install.sh | sh
-
 RUN curl -fsSL https://herdr.dev/install.sh | sh
+
+RUN npm install -g @jmfederico/pi-web --allow-scripts=node-pty
+
 RUN mkdir -p /repo
 RUN chown -R util /home /work /repo
 
